@@ -51,11 +51,7 @@ class TituloController extends Controller {
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function create() {
        Session::forget('warning');// limpa da sessão o alert warning 
         
@@ -70,36 +66,47 @@ class TituloController extends Controller {
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+ 
     public function store(Request $request) {
         //Salvar
          $data = $request->except('_token');
          
+     
+       
+       //verifica se tem array vazio (contrato, data-vencimento, valor, data-geração)
          
-         
-           dd($data);
-        
-       
-       die();
-         $validator = $this->validator($data);
-           if($validator->fails()){
-           return redirect()->route('titulo.create')
-                   ->withErrors($validator)
-                   ->withInput();       
-       }
-       
-      
-       
-       // Salva os contratos enviados passando o Id do devedor como chave estrangeira  
-        foreach ($data['contrato'] as $contrato) {
-            $validator = $this->validatorArray($data);
+       var_dump($data);
+        if (in_array(NULL, $data['creditor'])) {
+            $error = 'Preencha o Credor';
         }
-       
+        if (in_array(NULL, $data['nome'])) {
+            echo "Prencha todos os contratos";
+        }
+        if (in_array(NULL, $data['cpf'])) {
+            echo "Prencha todos os contratos";
+        }
+        if (in_array(NULL, $data['data-vencimento'])) {
+            echo "Prencha todos os contratos";
+        }
+        if (in_array(NULL, $data['valor'])) {
+            echo "Prencha todos os contratos";
+        }
+        if (in_array(NULL, $data['contrato'])) {
+            echo "Prencha todos os contratos";
+        }
+        if (in_array(NULL, $data['parcela'])) {
+            echo "Prencha todos os contratos";
+        }
+        if (in_array(NULL, $data['data-geracao'])) {
+            echo "Prencha todos os contratos";
+        }
+
+
+
+
+
+
+        die();
            /*
        Debertor::whereHas('titulo', function ($q) use($value) {
                         $q->where('nome', 'LIKE', '%' . $data[$value] . '%');
@@ -219,22 +226,5 @@ class TituloController extends Controller {
             return array();
         }
     }
-    
-       protected function validator(array $data){
-            
-        return Validator::make($data, [
-            
-                    'creditor' => 'required',
-                    'nome' => 'required',
-                    'cpf' => 'required','numeric',
-                    'data-vencimento' => 'required',
-                    'data-geracao' => 'required',
-                    'valor' => 'required',
-                    'contrato' => 'required',
-                    'parcela' => 'required',  
-        ]);
-        
-     
-    }
-
+   
 }

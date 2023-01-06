@@ -169,7 +169,7 @@ $p('#select-credor').change(function () {
                 var tag = "<option id='option-cliente'>" + key['nome'] + "</option>";
 
                 $p("#option-devedor").after(tag);
-                console.log(key['nome']);
+             
             });
 
 
@@ -208,15 +208,16 @@ $p('#select-devedor').change(function () {
 
 //TELA TITULO - Abre novo campo para cadastro de parcela
 $p(document).on('click', '.add-parcela', function () {
-        var tag = '<tr class="info-titulo" ><td><input type="date" class="form-control" name="data-vencimento[]" ></td>\n\
+         var tag = '<tr><td><input name="data-vencimento[]" type="date" class="form-control"></td>\n\
                         <td><input id="moeda" type="text" class="form-control" placeholder="R$" name="valor[]"></td>\n\
                         <td><input  type="number" class="form-control"  placeholder="Ctr" name="contrato[]"></td>\n\
                         <td><input  type="number" class="form-control" placeholder="Pc" name="parcela[]"></td>\n\
                         <td> <input type="date" class="form-control" name="data-geracao[]"></td>\n\
                         <td><button type="button" class="btn btn-block btn-dark btn-flat add-parcela">+</button></td>\n\
                         <td><button type="button" class="btn btn-block btn-danger btn-flat del-parcela">-</button></td></tr>';
+
+    $p('.card-body .tabela .body-titulo').after(tag);
        
-        $p('.body-titulo').after(tag);
     });
 
 

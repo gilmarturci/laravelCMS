@@ -56,7 +56,7 @@
 
                     <label class="col-sm-1 col-form-label ">Credor:</label>
                     <div class="col-sm-2">
-                        <select class="form-control" name="creditor" id="select-credor">
+                        <select class="form-control" name="creditor[]" id="select-credor">
                             <option >{!! !empty(old('creditor')) ? old('creditor') : '' !!}</option>
                             @foreach($credores as $credor)
                             <option>{!! !empty($credor->nome) ? $credor->nome : 'Null' !!}</option>
@@ -72,7 +72,7 @@
                                         <path d="M8 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
                                     </svg></span>
                             </div>
-                            <select class="form-control" name="nome"  id="select-devedor" >
+                            <select class="form-control" name="nome[]"  id="select-devedor" >
                                 <option id="option-devedor"></option>
                             </select>
                         </div>
@@ -85,38 +85,38 @@
                                         <path d="M11 0H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2 2 2 0 0 0 2-2V4a2 2 0 0 0-2-2 2 2 0 0 0-2-2zm2 3a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1V3zM2 2a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V2z"/>
                                     </svg></span>
                             </div>
-                            <input  readonly class="form-control @error('name') is-invalid @enderror" name="cpf" value="{{old('cpf')}}" id="cpf">
+                            <input  readonly class="form-control @error('name') is-invalid @enderror" name="cpf[]" value="{{old('cpf')}}" id="cpf">
                         </div>
                     </div>
 
                 </div>
 
         </div>
+      </div>
 
-    </div>
-   </div>
+   
 
   
    <div class="card" id="Pesquisa">
         <div class="card-body">
-            <table class="table table-hover">
+            <table class="table table-hover tabela">
                 <thead>
-    
-            <tr>
 
-                <th >Vencimento</th>
-                <th >Valor</th>
-                <th >Contrato</th>
-                <th >Parcela</th>
-                <th >Dt.Geração</th>
-             
-            </tr>
-        </thead>
+                    <tr>
+
+                        <th >Vencimento</th>
+                        <th >Valor</th>
+                        <th >Contrato</th>
+                        <th >Parcela</th>
+                        <th >Dt.Geração</th>
+
+                    </tr>
+                </thead>
 
     
-            <tbody class="body-titulo">
+                <tbody class="body-titulo">
                
-                <tr class="info-titulo" >
+                    <tr class="info-titulo">
                         <td><input name="data-vencimento[]" type="date" class="form-control"></td>
                         <td><input name="valor[]"  id="moeda" type="text" class="form-control" placeholder="R$"> </td>
                         <td> <input name="contrato[]" type="number" class="form-control"  placeholder="Ctr"></td>
@@ -126,6 +126,7 @@
                         <td><button type="button" class="btn btn-block btn-danger btn-flat del-parcela">-</button></td>
                     
                     </tr>
+                     
             
             </tbody>
      
