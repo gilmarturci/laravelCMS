@@ -75,7 +75,7 @@ class TituloController extends Controller {
        
        //verifica se tem array vazio (contrato, data-vencimento, valor, data-geração)
          
-       var_dump($data);
+     
         if (in_array(NULL, $data['creditor'])) {
             $error = 'Preencha o Credor';
         }
