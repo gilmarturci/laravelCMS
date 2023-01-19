@@ -39,8 +39,19 @@
         
         <div class="card-body">
             <div class="row">
-                <div class="col-3">
+                <div class="col-2">
                     <input type="text" name="contrato" class="form-control" placeholder="titulo">
+                </div>
+                  <div class="col-1">
+                    <div class="form-group">
+                        <select class="form-control" name="status" >
+                            <option value="">St.</option>
+                            <option>A</option>
+                            <option>P</option>
+                            <option>C</option>
+                            <option>S</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="col-2">
                     <input type="text" name="codigo" class="form-control" placeholder="Cod Devedor">
@@ -59,24 +70,34 @@
                                 </svg>
                             </span>
                         </div>
-                       <input type="text" class="form-control " id="calendario"  name="data_pgto" placeholder="Data Vencimento">
+                       <input type="text" class="form-control " id="calendario"  name="vencimento" placeholder="Data Vencimento">
                     </div>
 
                 </div>
                 
             </div> 
             <div class="row">
-                <div class="col-4">
+                <div class="col-3">
                     <div class="form-group" >
                         <label></label>
                         <input type="text" name="nome" class="form-control" placeholder="Nome devedor">
                     </div>
                 </div>
-                <div class="col-2">
+                 <div class="col-1">
+                    <div class="form-group">
+                        <label></label>
+                        <select class="form-control" name="negociacao" >
+                            <option value="">ST.</option>
+                            <option>N</option>
+                            <option>O</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-1">
                     <div class="form-group">
                         <label></label>
                         <select class="form-control" name="creditor" >
-                            <option value="">Credor</option>
+                            <option value="">TP</option>
                             @foreach($credores as $credor)
                             <option>{!! !empty($credor->nome) ? $credor->nome : 'Null' !!}</option>
                             @endforeach
@@ -127,6 +148,10 @@
                             <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
                         </svg>Novo</a>
                 </div>
+                 <div class="col-2">
+                    <a type="button" class="btn btn-block btn-outline-primary btn-sm del-titulo"  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                        </svg>Excluir</a>
+                </div>
             </div>  
         </div>
     </div> 
@@ -141,6 +166,7 @@
     
                     <tr>
 
+                <th ><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">&nbsp;</th>       
                 <th >Credor</th>
                 <th>Cod.Dev</th>
                 <th >Nome</th>
@@ -151,6 +177,7 @@
                 <th >DataPagamento</th>
                 <th >Valor.Pg</th>
                 <th >St.</th>
+                <th >T/N</th>
                 <th ></th>
             </tr>
         </thead>
@@ -165,26 +192,43 @@
             <tbody>
                 <tr>
 
+                    <td><input class="form-check-input check-titulo" type="checkbox" value="" id="check-titulo"></td>
                     <td> {!! !empty($credor->nome) ? $credor->nome : 'Null' !!}</td>
-                    <td> {!! !empty($devedor->codigo) ? $devedor->codigo : 'Null' !!}</td>
+                    <td id='codigo'> {!! !empty($devedor->codigo) ? $devedor->codigo : 'Null' !!}</td>
                     <td> {!! !empty($devedor->nome) ? $devedor->nome : 'Null' !!}</td>
-                    <td> {!! !empty($titulo->contrato) ? $titulo->contrato : 'Null' !!}</td>
-                    <td> {!! !empty($titulo->parcela) ? $titulo->parcela : 'Null' !!}</td>
+                    <td id='contrato'> {!! !empty($titulo->contrato) ? $titulo->contrato : 'Null' !!}</td>
+                    <td class="parcela"> {!! !empty($titulo->parcela) ? $titulo->parcela : 'Null' !!}</td>
                     <td>{{ date( 'd/m/Y' , strtotime($titulo->vencimento))}}</td>   
                     <td> {{'R$ '.number_format($titulo->valor, 2, ',', '.') }}  </td>
                     <td>{{$titulo->data_pgto ? date('d/m/Y', strtotime($titulo->data_pgto)) : ''}}</td> 
                     <td> {{'R$ '.number_format($titulo->valor_pgto, 2, ',', '.') }}  </td>
                     <td> {!! !empty($titulo->status) ? $titulo->status : 'Null' !!}</td>
+                    <td> {!! !empty($titulo->tipo_negociacao) ? $titulo->tipo_negociacao : 'Null' !!}</td>
                 </tr>
 
             </tbody>
         
       @endforeach
 </table>
-         
+            
      </div>
 </div>
-     
+         @if(!empty($titulos))
+         
+         {{ $titulos->appends([
+             'contrato' => $contrato,
+             'codigo' => $codigo,
+             'cpf' => $cpf,
+             'data_pgto' => $data_pgto,
+             'nome' => $nome,
+             'creditor' => $creditor,
+             'category' => $category,
+             'data_geracao' => $data_geracao,
+             'status' => $status,
+             'negociacao' => $negociacao,
+                 ])->links() }}
+         @endif
+    
      
      
 <script src="{{asset('/assets/js/vendor/jquery-1.12.4.min.js')}}"></script>

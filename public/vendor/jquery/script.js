@@ -208,7 +208,7 @@ $p('#select-devedor').change(function () {
 
 //TELA TITULO - Abre novo campo para cadastro de parcela
 $p(document).on('click', '.add-parcela', function () {
-         var tag = '<tr><td><input name="data-vencimento[]" type="date" class="form-control"></td>\n\
+         var tag = '<tr class="info-titulo"><td><input name="data-vencimento[]" type="date" class="form-control"></td>\n\
                         <td><input id="moeda" type="text" class="form-control" placeholder="R$" name="valor[]"></td>\n\
                         <td><input  type="number" class="form-control"  placeholder="Ctr" name="contrato[]"></td>\n\
                         <td><input  type="number" class="form-control" placeholder="Pc" name="parcela[]"></td>\n\
@@ -222,6 +222,14 @@ $p(document).on('click', '.add-parcela', function () {
 
 
 //TELA TITULO - exclui a linha de cadastrar nova parcela
-$p(document).on('click', '.del-parcela', function () {
-    $p(this).closest('.info-titulo').remove(); 
+$(document).ready(function() {
+    $(":check-titulo").change(function() {
+        var total = $(":checkbox:checked").get().reduce(function(tot, el) {
+            return tot + Number(el.value);
+        }, 0);
+        $('[name="totalValor"]').val(total);
+    });
+});
+ 
+
 });

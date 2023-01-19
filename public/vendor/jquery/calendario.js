@@ -5,13 +5,14 @@ var $j = jQuery.noConflict();
 
 $j(function() {
 
-  $j('input[id="calendario"]').daterangepicker({
+    $j('input[id="calendario"]').daterangepicker({
       autoUpdateInput: false,
       locale: {
+          format: "DD/MM/YYYY",
           cancelLabel: 'Clear',
           separator: ' - ',
-        showCustonRangeLabel: false,
-        monthNames: ["Janeiro",
+          showCustonRangeLabel: false,
+          monthNames: ["Janeiro",
             "Fevereiro",
             "Março",
             "Abril",

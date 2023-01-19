@@ -45,9 +45,11 @@
                </svg></strong> {{ session('success') }}
        </div>
        @endif
-
+                      
        <button id="showDadosPessoais" type="button" class="btn btn-block btn-danger btn-xs">Dados Cadastral </button></br>
     
+   
+        
     <div class="card" >
         <div class="card-body" id='DadosPessoais'>
            
@@ -57,10 +59,18 @@
                     <label class="col-sm-1 col-form-label ">Credor:</label>
                     <div class="col-sm-2">
                         <select class="form-control" name="creditor[]" id="select-credor">
-                            <option >{!! !empty(old('creditor')) ? old('creditor') : '' !!}</option>
+                            
                             @foreach($credores as $credor)
                             <option>{!! !empty($credor->nome) ? $credor->nome : 'Null' !!}</option>
                             @endforeach
+                            
+                            @if(old('creditor'))
+                            @for( $i =0; $i < count(old('creditor')); $i++)
+                            <option >{!! !empty(old('creditor')) ? old('creditor.'.$i) : '' !!}</option>
+                            @endfor
+                            @endif
+                            
+                            
                         </select>
                     </div>
                     <label class="col-sm-1 col-form-label">Nome:</label>
@@ -73,6 +83,11 @@
                                     </svg></span>
                             </div>
                             <select class="form-control" name="nome[]"  id="select-devedor" >
+                                @if(old('nome'))
+                                @for( $i =0; $i < count(old('nome')); $i++)
+                                <option >{!! !empty(old('nome')) ? old('nome.'.$i) : '' !!}</option>
+                                @endfor
+                                @endif
                                 <option id="option-devedor"></option>
                             </select>
                         </div>
@@ -85,8 +100,14 @@
                                         <path d="M11 0H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2 2 2 0 0 0 2-2V4a2 2 0 0 0-2-2 2 2 0 0 0-2-2zm2 3a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1V3zM2 2a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V2z"/>
                                     </svg></span>
                             </div>
-                            <input  readonly class="form-control @error('name') is-invalid @enderror" name="cpf[]" value="{{old('cpf')}}" id="cpf">
-                        </div>
+                            @if(old('cpf'))
+                            @for( $i =0; $i < count(old('cpf')); $i++)
+                            <input  readonly class="form-control @error('cpf') is-invalid @enderror" name="cpf[]" value="{{ old('cpf.'.$i)}}" id="cpf">
+                            @endfor
+                           @else
+                                <input  readonly class="form-control @error('cpf') is-invalid @enderror" name="cpf[]" id="cpf">
+                            @endif
+                                    </div>
                     </div>
 
                 </div>
@@ -115,17 +136,31 @@
 
     
                 <tbody class="body-titulo">
-               
-                    <tr class="info-titulo">
-                        <td><input name="data-vencimento[]" type="date" class="form-control"></td>
-                        <td><input name="valor[]"  id="moeda" type="text" class="form-control" placeholder="R$"> </td>
-                        <td> <input name="contrato[]" type="number" class="form-control"  placeholder="Ctr"></td>
-                        <td><input name="parcela[]" type="number" class="form-control"  placeholder="Pc"> </td>
-                        <td> <input name="data-geracao[]" type="date" class="form-control"></td>
+
+                     <tr class="info-titulo">
+                        @if(old('cpf'))
+                        @for( $i =0; $i < count(old('contrato')); $i++)
+                        <td><input name="data-vencimento[]" type="date" class="form-control" value="{{ old('data-vencimento.'.$i)}}"></td>
+                        <td><input name="valor[]"  id="moeda" type="text" class="form-control" placeholder="R$" value="{{ old('valor.'.$i)}}"> </td>
+                        <td> <input name="contrato[]" type="number" class="form-control"  placeholder="Ctr"value="{{ old('contrato.'.$i)}}" ></td>
+                        <td><input name="parcela[]" type="number" class="form-control"  placeholder="Pc" value="{{ old('parcela.'.$i)}}"> </td>
+                        <td> <input name="data-geracao[]" type="date" class="form-control" value="{{ old('data-geracao.'.$i)}}"></td>
                         <td><button type="button" class="btn btn-block btn-dark btn-flat add-parcela">+</button></td>
                         <td><button type="button" class="btn btn-block btn-danger btn-flat del-parcela">-</button></td>
-                    
-                    </tr>
+                         </tr>
+                        @endfor
+                            @else 
+                            <td><input name="data-vencimento[]" type="date" class="form-control"></td>
+                            <td><input name="valor[]"  id="moeda" type="text" class="form-control" placeholder="R$" > </td>
+                            <td> <input name="contrato[]" type="number" class="form-control"  placeholder="Ctr" ></td>
+                            <td><input name="parcela[]" type="number" class="form-control"  placeholder="Pc"> </td>
+                            <td> <input name="data-geracao[]" type="date" class="form-control"></td>
+                            <td><button type="button" class="btn btn-block btn-dark btn-flat add-parcela">+</button></td>
+                            <td><button type="button" class="btn btn-block btn-danger btn-flat del-parcela">-</button></td>
+                            </tr>
+                            @endif
+                  
+                
                      
             
             </tbody>
