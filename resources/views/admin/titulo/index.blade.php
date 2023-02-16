@@ -5,6 +5,7 @@
 @section('content')
 
 @if (session('warning'))
+
 <br>
 <div class="alert alert-warning   alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert">
@@ -45,11 +46,11 @@
                   <div class="col-1">
                     <div class="form-group">
                         <select class="form-control" name="status" >
-                            <option value="">St.</option>
-                            <option>A</option>
-                            <option>P</option>
-                            <option>C</option>
-                            <option>S</option>
+                            <option value="">Status</option>
+                            <option>Aberto</option>
+                            <option>Pago</option>
+                            <option>Cancelado</option>
+                            <option>Suspenso</option>
                         </select>
                     </div>
                 </div>
@@ -87,17 +88,17 @@
                     <div class="form-group">
                         <label></label>
                         <select class="form-control" name="negociacao" >
-                            <option value="">ST.</option>
-                            <option>N</option>
-                            <option>O</option>
+                            <option value="">N/O</option>
+                            <option>Negociado</option>
+                            <option>Original</option>
                         </select>
                     </div>
                 </div>
-                <div class="col-1">
+                <div class="col-2">
                     <div class="form-group">
                         <label></label>
                         <select class="form-control" name="creditor" >
-                            <option value="">TP</option>
+                            <option value="">Credor</option>
                             @foreach($credores as $credor)
                             <option>{!! !empty($credor->nome) ? $credor->nome : 'Null' !!}</option>
                             @endforeach
@@ -149,8 +150,12 @@
                         </svg>Novo</a>
                 </div>
                  <div class="col-2">
-                    <a type="button" class="btn btn-block btn-outline-primary btn-sm del-titulo"  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                    <a type="button" id="del-titulo" class="btn btn-block btn-outline-primary btn-sm del-titulo"  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
                         </svg>Excluir</a>
+                </div>
+                 <div class="col-2">
+                    <a type="button" id="status-titulo" class="btn btn-block btn-outline-primary btn-sm status-titulo"  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                        </svg>Baixar/Reabrir</a>
                 </div>
             </div>  
         </div>
@@ -164,9 +169,8 @@
             <table class="table table-hover">
                 <thead>
     
-                    <tr>
-
-                <th ><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">&nbsp;</th>       
+              <tr>
+                <th ><input class="form-check-input"type="checkbox" id="check_all_1" name="check_all_1">&nbsp;</th>    
                 <th >Credor</th>
                 <th>Cod.Dev</th>
                 <th >Nome</th>
@@ -177,12 +181,13 @@
                 <th >DataPagamento</th>
                 <th >Valor.Pg</th>
                 <th >St.</th>
-                <th >T/N</th>
+                <th >N/O</th>
                 <th ></th>
             </tr>
         </thead>
-
-       @foreach($titulos as $titulo)
+               
+              
+  @foreach($titulos as $titulo)
        @php
        $credor = $titulo->credor;
        $titulo = $titulo;
@@ -190,20 +195,21 @@
        @endphp
        
             <tbody>
-                <tr>
+                <tr >
 
-                    <td><input class="form-check-input check-titulo" type="checkbox" value="" id="check-titulo"></td>
-                    <td> {!! !empty($credor->nome) ? $credor->nome : 'Null' !!}</td>
+                    <td ><input type="checkbox" class="form-check-input check-titulo""></td>
+                    <td >  {!! !empty($credor->nome) ? $credor->nome : 'Null' !!}</td>
                     <td id='codigo'> {!! !empty($devedor->codigo) ? $devedor->codigo : 'Null' !!}</td>
                     <td> {!! !empty($devedor->nome) ? $devedor->nome : 'Null' !!}</td>
                     <td id='contrato'> {!! !empty($titulo->contrato) ? $titulo->contrato : 'Null' !!}</td>
-                    <td class="parcela"> {!! !empty($titulo->parcela) ? $titulo->parcela : 'Null' !!}</td>
+                    <td id="parcela"> {!! !empty($titulo->parcela) ? $titulo->parcela : 'Null' !!}</td>
                     <td>{{ date( 'd/m/Y' , strtotime($titulo->vencimento))}}</td>   
                     <td> {{'R$ '.number_format($titulo->valor, 2, ',', '.') }}  </td>
                     <td>{{$titulo->data_pgto ? date('d/m/Y', strtotime($titulo->data_pgto)) : ''}}</td> 
                     <td> {{'R$ '.number_format($titulo->valor_pgto, 2, ',', '.') }}  </td>
-                    <td> {!! !empty($titulo->status) ? $titulo->status : 'Null' !!}</td>
-                    <td> {!! !empty($titulo->tipo_negociacao) ? $titulo->tipo_negociacao : 'Null' !!}</td>
+                    <td id="status"> {!! !empty($titulo->status) ? substr($titulo->status, 0, 1) : 'Null' !!}</td>
+                    <td> {!! !empty($titulo->tipo_negociacao) ? substr($titulo->tipo_negociacao, 0, 1) : 'Null' !!}</td>
+                    <td id="debertor-id"><div id="teste" style="display:none"> {!! !empty($devedor->id) ? $devedor->id : 'Null' !!}</div></td>
                 </tr>
 
             </tbody>
@@ -212,10 +218,11 @@
 </table>
             
      </div>
-</div>
-         @if(!empty($titulos))
-         
-         {{ $titulos->appends([
+           <div class="row">
+               <div class="col-11">
+                   @if(!empty($titulos))
+
+                   {{ $titulos->appends([
              'contrato' => $contrato,
              'codigo' => $codigo,
              'cpf' => $cpf,
@@ -227,8 +234,98 @@
              'status' => $status,
              'negociacao' => $negociacao,
                  ])->links() }}
+               </div>
+
+               <div class="col-1">
+                   @if (session('count'))
+                   <button type="button" class="btn btn-outline-primary btn-sm">{{$qnt_titulo}}/{{ session('count') }}</button>
+                   @endif     
+               </div>
+           </div>
          @endif
-    
+         
+         
+         <div id="modal" class="modal " tabindex="-1" role="dialog">
+             <div class="modal-dialog" role="document">
+                 <div class="modal-content">
+                     <div class="modal-header">
+                         <h5 class="modal-title">Informações de Baixa</h5> 
+                     </div>
+                     <div class="modal-body">
+                         <form id="modal-form" method="post" action="">
+                             <div class="col-8">
+                                 <div class="form-group-sm" >
+                                     <label>Data Pagamento</label>
+                                     <input id="data-pagamento" type="date" name="data-pagamento" class="form-control" placeholder="Data Pagamento">
+                                 </div>
+                             </div>
+                             <div class="col-8">
+                                 <div class="form-group-sm">
+                                     <label>Portador</label>
+                                     <select id="portador" class="form-control" name="portador" >
+                                         <option value="">Selecione</option>
+                                         @foreach($portadores as $portador)
+                                         <option>{!! !empty($portador->portador) ? $portador->portador : 'Null' !!}</option>
+                                         @endforeach
+                                     </select>
+                                 </div>
+                             </div>
+                             <div class="col-8">
+                                 <div class="form-group-sm">
+                                     <label>Forma de Pagamento</label>
+                                     <select id="forma-pagamento" class="form-control" name="forma-pagamento" >
+                                         <option>Selecione</option>
+                                         <option>Avista</option>
+                                         <option>Cartao</option>
+                                         <option>Boleto</option>
+                                         <option>Pix</option>
+                                     </select>
+                                 </div>
+                             </div>
+                             <div class="col-8">
+                                 <div class="form-group-sm">
+                                      <label>Valor Pago</label>
+                                     <td><input name="valor"  id="valor" type="text" class="form-control" placeholder="R$ 0,00" value=""> </td>
+                                 </div>
+                             </div>
+                              <div class="col-8">
+                                 <div class="form-group-sm">
+                                      <label>Juros</label>
+                                     <td><input name="juros"  id="juros" type="text" class="form-control" placeholder="R$ 0,00" value=""> </td>
+                                 </div>
+                             </div>
+                              <div class="col-8">
+                                 <div class="form-group-sm">
+                                      <label>Multa</label>
+                                     <td><input name="multa"  id="multa" type="text" class="form-control" placeholder="R$ 0,00" value=""> </td>
+                                 </div>
+                             </div>
+                              <div class="col-8">
+                                 <div class="form-group-sm">
+                                      <label>Desconto</label>
+                                     <td><input name="desconto"  id="desconto" type="text" class="form-control" placeholder="R$ 0,00" value=""> </td>
+                                 </div>
+                             </div>
+
+
+
+
+                             <div class="modal-footer">
+                                 <button id="fechaModal"  type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                                 <button  id="info-baixa" type="button" class="btn btn-success" data-dismiss="modal">Confirmar</button>
+                             </div>
+                        
+                     </div>
+
+                 </div>
+             </div>
+         </div
+         
+</div>
+     
+         
+       
+
      
      
 <script src="{{asset('/assets/js/vendor/jquery-1.12.4.min.js')}}"></script>

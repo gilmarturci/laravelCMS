@@ -31,6 +31,7 @@ class EventController extends Controller {
         print_r($result);
     }
 
+
     public function email_delete() {
       
         $cod = $_GET['cod'];

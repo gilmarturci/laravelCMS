@@ -64,7 +64,7 @@ $p(function () {
            $p(this).mask('90,00', {reverse: true});
         }); 
         $p("#moeda").keypress(function() {
-            $p(this).mask('R$ #.##0,00', {reverse: true});
+            $p(this).mask('R$ ##.##0,00', {reverse: true});
         });        
         $p("#fixo").keypress(function() {
             $p(this).mask('(00) 0000-0009');
@@ -216,20 +216,111 @@ $p(document).on('click', '.add-parcela', function () {
                         <td><button type="button" class="btn btn-block btn-dark btn-flat add-parcela">+</button></td>\n\
                         <td><button type="button" class="btn btn-block btn-danger btn-flat del-parcela">-</button></td></tr>';
 
-    $p('.card-body .tabela .body-titulo').after(tag);
+    $p('.card-body .tabela .body-titulo').append(tag);
        
     });
+    
+    
+    
+    //TELA TITULO - exclui a linha de cadastrar nova parcela
+$p(document).on('click', '.del-parcela', function () {
+     $(this).closest('tr').remove(); 
+});
+    
+    
+   
+// TELA TITULOS -checkbox marcar todos os checkBox
+  // checkbox marcar todos
+document.getElementById("check_all_1").onclick = function() {
+     $('input:checkbox').not(this).prop('checked', this.checked);
+};
+      
 
 
-//TELA TITULO - exclui a linha de cadastrar nova parcela
-$(document).ready(function() {
-    $(":check-titulo").change(function() {
-        var total = $(":checkbox:checked").get().reduce(function(tot, el) {
-            return tot + Number(el.value);
-        }, 0);
-        $('[name="totalValor"]').val(total);
+//TELA TITULO - Remove os titulos selecionados na check
+document.getElementById("del-titulo").onclick = function () {
+    //Remove a informação da view
+    ckList = document.querySelectorAll("input[type=checkbox]:checked");
+    ckList.forEach(function (el) {
+        el.parentElement.parentElement.remove();
+    });
+
+             //Remove a informação do banco
+
+    var contrato = $p(ckList).closest("tr").find("#contrato").text();
+    var parcela = $p(ckList).closest("tr").find("#parcela").text();
+    var debertor_id = $p(ckList).closest("tr").find("#debertor-id").text();
+
+        if (confirm("Deseja Excluir o item da lista?")) {
+            
+            $.ajax({
+                type: 'GET', //tipo de metodo de envio
+                 url: '/painel/del.titulo/destroy?contrato=' + contrato + '&'+ 'parcela=' + parcela+ '&'+ 'debertor_id=' + debertor_id, //URL que ira receber os dados enviados
+               // data: txt,
+                datatype: 'json',
+
+                success: function (resultado) {
+
+                   alert("Titulo removido com sucesso");
+                },
+                error: function () {
+                    alert('erro contate o suporte');
+                }
+
+            });
+        }
+        return false;
+    
+};
+
+// Abre modal da tela alterar status titulo
+$p(function () {
+    $('#status-titulo').click(function () {
+        $('#modal').modal('show');
     });
 });
- 
 
-});
+
+//TELA TITULO - altera status do titulo
+document.getElementById("info-baixa").onclick = function () {
+  
+    ckList = document.querySelectorAll("input[type=checkbox]:checked");
+    
+    var debertor_id = $p(ckList).closest("tr").find("#debertor-id").text();
+    var contrato = $p(ckList).closest("tr").find("#contrato").text();
+    var parcela = $p(ckList).closest("tr").find("#parcela").text();
+    var debertor_id = $p(ckList).closest("tr").find("#debertor-id").text();
+    var status = $p(ckList).closest("tr").find("#status").text();
+    var data_pgto = $p("#data-pagamento").val();
+    var portador = $p("#portador").val();
+    var forma_pgto = $p("#forma-pagamento").val();
+    var valor = $p("#valor").val();
+    var juros = $p("#juros").val();
+    var multa = $p("#multa").val();
+    var desconto = $p("#desconto").val();
+
+            
+            $.ajax({
+                type: 'GET', //tipo de metodo de envio
+                 url: '/painel/update.titulo/update?contrato=' + contrato + '&'+ 'parcela=' + parcela+ '&'+ 'debertor_id=' + debertor_id
+                         +'&'+ 'status=' + status+'&'+ 'data_pgto=' + data_pgto+'&'+ 'portador=' + portador +'&'+ 'forma_pgto=' + forma_pgto
+                 +'&'+ 'valor=' + valor +'&'+ 'juros=' + juros+'&'+ 'multa=' + multa +'&'+ 'desconto=' + desconto, 
+               // data: txt,
+                datatype: 'json',
+
+                success: function (resultado) {
+
+                   alert(resultado);
+                   location.reload();
+                },
+                error: function () {
+                    alert('erro contate o suporte');
+                }
+
+            });
+        
+        return false;
+    
+};
+
+

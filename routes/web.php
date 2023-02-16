@@ -44,10 +44,13 @@ Route::get('/', [Site\HomeController::class, 'index']);
     Route::resource('/debertor', '\App\Http\Controllers\Admin\DebertorController');
     
     Route::resource('/titulo', '\App\Http\Controllers\Admin\TituloController');
+
        
      
     Route::get('pesquisa/{cep}', [Admin\EventController::class, 'cep'])->name('event.cep');
     Route::get('delete/{email}', [Admin\EventController::class, 'email_delete'])->name('event.email');
+    Route::get('del.titulo/{titulo}', [Admin\TituloController::class, 'destroy'])->name('event.del.titulo');
+     Route::get('update.titulo/{titulo}', [Admin\TituloController::class, 'update'])->name('event.update.titulo');
     Route::get('searchDebertor/{devedor}', [Admin\EventController::class, 'searchDevedor'])->name('event.searchDevedor');
     Route::get('searchCpf/{nome}', [Admin\EventController::class, 'searchCpfDevedor'])->name('event.searchCpfDevedor');
 });

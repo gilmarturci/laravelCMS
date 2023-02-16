@@ -13,11 +13,13 @@ use App\Models\Telephone;
 use App\Models\Creditor;
 use App\Models\Manager;
 use App\Models\Pessoa;
+use App\Models\Carrier;
 use App\Models\Category;
 use App\Models\Titulo;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 
 class TituloController extends Controller {
@@ -64,26 +66,37 @@ class TituloController extends Controller {
       ///****************************************/////  
          
 
-
-
-
-
         $titulos = $this->searchAll($data); //Faz a pesquisa dos dados enviados no metodo searchAll
     
         $gerentes = Manager::all();
+        $portadores = Carrier::all();
         $categorias = Category::all();
         $pessoas = Pessoa::all();
         $credores = Creditor::all();
         $loggedID = Auth::id();
-      
+        
+
+  
+        //contado de titulos - exibidos/total
+        if(!empty($titulos)){
+        $qnt_titulo =($titulos->count('contrato'));
+        }else{
+           $qnt_titulo = 0; 
+        }
+     
+       
+        
 
         return view('admin.titulo.index', [
             'titulos' => $titulos,
             'loggedID' => $loggedID,
             'gerentes' => $gerentes,
+            'portadores' => $portadores,
             'pessoas' => $pessoas,
             'credores' => $credores,
             'categorias' => $categorias,
+            'qnt_titulo' =>  $qnt_titulo,
+          
             
             'contrato' => $contrato,
             'codigo' => $codigo,
@@ -170,14 +183,16 @@ class TituloController extends Controller {
                 }
             }
             
-            $status = "A";
-            $valor = $data['valor'][$i];
+            $status = "Aberto";
+            $tipo_negociacao = "Original";
+            $valor = str_replace(',','.', str_replace('.','', $data['valor'][$i]));
             $parcela = $data['parcela'][$i];
             $contrato = $data['contrato'][$i];
             $data_venc = $data['data-vencimento'][$i];
             $data_geracao = $data['data-geracao'][$i];
 
             $titulo->status = $status;
+            $titulo->tipo_negociacao = $tipo_negociacao;
             $titulo->valor = $valor;
             $titulo->parcela = $parcela;
             $titulo->contrato = $contrato;
@@ -214,8 +229,75 @@ class TituloController extends Controller {
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id) {
-        //
+    public function update() {
+        
+        $debertor_id = explode(" ", $_GET['debertor_id']);
+        $contrato = explode(" ", $_GET['contrato']);
+        $parcela = explode(" ", $_GET['parcela']);
+        $status = explode(" ", $_GET['status']);
+        if (!empty($_GET['valor'])) {
+        $data_pgto = date('Y-m-d', strtotime($_GET['data_pgto']));
+        }else{$data_pgto = NULL;};
+        
+        $portador = $_GET['portador'];
+        $forma_pgto = $_GET['forma_pgto'];
+        
+        if (!empty($_GET['valor'])) {
+            $valor = str_replace(',', '.', str_replace('.', '', $_GET['valor']));
+        }else{$valor = NULL;};
+        if (!empty($_GET['juros'])) {
+            $juros = str_replace(',', '.', str_replace('.', '', $_GET['juros']));
+        }else{$juros = NULL;};
+        if (!empty($_GET['desconto'])) {
+            $desconto = str_replace(',', '.', str_replace('.', '', $_GET['desconto']));
+        }else{$desconto = NULL;};
+         if (!empty($_GET['multa'])) {
+            $multa = str_replace(',', '.', str_replace('.', '', $_GET['multa']));
+        }else{$multa = NULL;};
+        if (!empty($_GET['valor'])) {
+            $desconto = str_replace(',', '.', str_replace('.', '', $_GET['desconto']));
+        }else{$desconto = NULL;};
+        
+
+        if (in_array("A", $status) && in_array("P", $status)) {
+            echo json_encode('Selecione titulos com o mesmo status');
+        } else {
+
+            for ($i = 0; count($status) > $i; $i++) {
+                
+                //busca o titulo pela parcela, contrato e debertor_id
+                    $titulo = Titulo::where('debertor_id', $debertor_id[$i])
+                            ->where('contrato', $contrato[$i])
+                            ->where('parcela', $parcela[$i])
+                            ->first();
+                    
+                  //Se titulo se encontrar abeto  
+                if ($status[$i] == 'A') {
+                    $titulo->status = "Pago";
+                    $titulo->data_pgto = $data_pgto;
+                    $titulo->portador = $portador;
+                    $titulo->forma_pgto = $forma_pgto;
+                    $titulo->valor_pgto = $valor;
+                    $titulo->juros = $juros;
+                    $titulo->multa = $multa;
+                    $titulo->desconto = $desconto;
+                    $titulo->save();
+                }
+                
+                //Se titulo se encontrar pago  
+                if ($status[$i] == 'P') {
+                    $titulo->status = "Aberto";
+                    $titulo->data_pgto = Null;
+                    $titulo->portador = Null;
+                    $titulo->forma_pgto = Null;
+                    $titulo->valor_pgto = Null;
+                    $titulo->juros = Null;
+                    $titulo->multa = Null;
+                    $titulo->desconto = Null;
+                    $titulo->save();
+                }
+            }
+        }
     }
 
     /**
@@ -224,9 +306,22 @@ class TituloController extends Controller {
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id) {
-        var_dump($id);
-        die();
+    public function destroy() {
+        
+        $contrato = explode(" ", $_GET['contrato']);
+        $parcela = explode(" ", $_GET['parcela']);
+        $debertor_id = explode(" ", $_GET['debertor_id']);
+
+        for ($i = 0; count($contrato) > $i; $i++) {
+            if (!empty($contrato[$i])) {
+                
+                DB::delete('DELETE FROM titulos WHERE debertor_id=:debertor_id and contrato=:contrato and parcela=:parcela', [
+                    'debertor_id' => $debertor_id[$i],
+                    'contrato' => $contrato[$i],
+                    'parcela' => $parcela[$i],
+                ]);
+            }
+        }
     }
 
     public function searchAll($data) {
@@ -248,21 +343,25 @@ class TituloController extends Controller {
                 if ($value == 'cpf' || $value == 'codigo' || $value == 'nome') {
                     $query->whereHas('devedor', function ($q) use($data, $value) {
                         $q->where($value, 'LIKE', '%' . $data[$value] . '%');
-                    });   
+                    });  
+                    
                 }
                 if ($value == 'manager') {
                     $query->whereHas('gerente', function ($q) use($data, $value) {
                         $q->where('nome', 'LIKE', '%' . $data[$value] . '%');
                     }); 
+                    
                 }
                 if ($value == 'creditor') {
                     $query->whereHas('credor', function ($q) use($data, $value) {
                         $q->where('nome', 'LIKE', '%' . $data[$value] . '%');
                     });
+                   
                 }
                 if ($value == 'status') {
                     
                     $query->where('status', $data[$value]); 
+                   
                   
                 }
                 if ($value == 'data_geracao' || $value == 'data_pgto') {
@@ -280,27 +379,29 @@ class TituloController extends Controller {
 
                   
                    $query->whereBetween($value, [$startdate, $endDate])->get();
-                   
+                  
                 }
                 if ($value == 'negociacao') {
-                    $query->where('tipo_negociacao', $data[$value]);  
+                    $query->where('tipo_negociacao', $data[$value]); 
+                    
                 }
 
                 if ($value == 'contrato') {
                     $query->where('contrato', $data[$value]);  
-                }
-                
+                   
+                }         
                
             }
             
-         
-             
-            $titulos = $query->with('devedor')->paginate(5);
-          
-                  
-                    
-          
+            
+            //salva o resultado de total de registro na Session para não conflitar com o paginate
+            $count_titulo = $query->count();
+            Session::flash('count',$count_titulo);
+            
+            //envia query paginado para a view
+            $titulos = $query->with('devedor')->paginate(10);
 
+            
             if (count($titulos) > 0) {
                 return $titulos;
             } else {
