@@ -330,7 +330,7 @@ return [
                             'text' => 'Gerente',
                             'icon'    => 'far fa-dot-circle nav-icon',
                             'icon_color' => 'red',
-                            'url' => 'painel/users',
+                            'url' => 'painel/gerente',
                             'can' => 'edit-users',
                         ],
                         
@@ -338,13 +338,13 @@ return [
                             'text' => 'Credor',
                            'icon'    => 'far fa-dot-circle nav-icon',
                             'icon_color' => 'red',
-                            'url' => '#',
+                            'url' => 'painel/credor',
                         ],
                         [
                             'text' => 'Categoria',
                            'icon'    => 'far fa-dot-circle nav-icon',
                             'icon_color' => 'red',
-                            'url' => '#',
+                            'url' => 'painel/categoria',
                         ],
                          
                     ],

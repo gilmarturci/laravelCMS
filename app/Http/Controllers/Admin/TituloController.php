@@ -199,7 +199,7 @@ class TituloController extends Controller {
             $titulo->vencimento = date('Y-m-d', strtotime($data_venc)); // convet formato de data;
             $titulo->data_geracao = date('Y-m-d', strtotime($data_geracao));
             
-            echo $parcela.' - Parcela </br>';
+        
             $titulo->save();
         }
        

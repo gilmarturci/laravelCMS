@@ -10,8 +10,7 @@
 
 <form method="POST" action="{{route('debertor.store')}}"> 
 <br><h4>Cadastro de Devedor</h4><br>
- 
-                @csrf
+ @csrf
 
     @if($errors->any())  
     <div class="alert alert-warning">

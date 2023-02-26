@@ -44,7 +44,9 @@ Route::get('/', [Site\HomeController::class, 'index']);
     Route::resource('/debertor', '\App\Http\Controllers\Admin\DebertorController');
     
     Route::resource('/titulo', '\App\Http\Controllers\Admin\TituloController');
-
+    
+    Route::resource('/gerente', '\App\Http\Controllers\Admin\ManagerController');
+Route::resource('/credor', '\App\Http\Controllers\Admin\CreditorController');
        
      
     Route::get('pesquisa/{cep}', [Admin\EventController::class, 'cep'])->name('event.cep');

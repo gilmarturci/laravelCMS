@@ -8,7 +8,7 @@
 
 @section('content')
 
-<form method="POST" action="{{route('debertor.update', ['debertor'=>$debertor->id])}}"> 
+<form method="POST" action="{{route('debertor.update', ['debertor'=>z$debertor->id])}}"> 
 <br><h4>Editar Devedor</h4><br>
                 @method('PUT')
                 @csrf
